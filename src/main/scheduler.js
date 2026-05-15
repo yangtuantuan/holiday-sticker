@@ -1,6 +1,8 @@
 // 调度器：负责定时刷新节日数据、检查提醒、触发通知
 // 通过依赖注入拿到 store、api、notify 函数，方便测试
 
+const logger = require('./logger')
+
 class Scheduler {
   constructor(store, api, notifyFn, onUpdateFn) {
     this.store = store
@@ -12,31 +14,47 @@ class Scheduler {
 
   // 启动调度：立即执行一次每日检查 + 设置定时器
   start() {
-    this.dailyCheck()
-    // 每小时检查一次是否需要刷新节日数据
-    this._interval = setInterval(() => this.dailyCheck(), 60 * 60 * 1000)
-    // 每分钟检查一次是否有提醒需要触发
-    setInterval(() => this.minuteCheck(), 60 * 1000)
+    try {
+      this.dailyCheck()
+    } catch (err) {
+      logger.error('初始每日检查失败', err)
+    }
+    this._interval = setInterval(() => {
+      try {
+        this.dailyCheck()
+      } catch (err) {
+        logger.error('定时每日检查失败', err)
+      }
+    }, 60 * 60 * 1000)
+    setInterval(() => {
+      try {
+        this.minuteCheck()
+      } catch (err) {
+        logger.error('分钟检查失败', err)
+      }
+    }, 60 * 1000)
   }
 
   // 每日检查：如果当天还没更新，就去拉 API
   async dailyCheck() {
-    const lastUpdated = this.store.getLastUpdated()
-    if (lastUpdated) {
-      const lastDate = lastUpdated.split('T')[0]
-      const today = new Date().toISOString().split('T')[0]
-      if (lastDate === today) return  // 今天已经更新过了
-    }
-
-    // 拉取当年 + 下一年数据
-    const data = await this.api.fetchCurrentAndNextYear('CN')
-    for (const [year, holidays] of Object.entries(data)) {
-      if (holidays) {
-        this.store.updateHolidayCache(year, holidays)
+    try {
+      const lastUpdated = this.store.getLastUpdated()
+      if (lastUpdated) {
+        const lastDate = lastUpdated.split('T')[0]
+        const today = new Date().toISOString().split('T')[0]
+        if (lastDate === today) return
       }
+
+      const data = await this.api.fetchCurrentAndNextYear('CN')
+      for (const [year, holidays] of Object.entries(data)) {
+        if (holidays) {
+          this.store.updateHolidayCache(year, holidays)
+        }
+      }
+      this.onUpdate()
+    } catch (err) {
+      logger.error('每日检查执行失败', err)
     }
-    // 通知渲染进程：节日数据已更新
-    this.onUpdate()
   }
 
   // 从节日列表中找出最近的尚未到来的节日
@@ -92,24 +110,34 @@ class Scheduler {
 
   // 计算自定义提醒的下次发生日期（内部方法）
   // once    → 直接返回 date
+  // weekly  → 每周这一天（1=周一 ... 7=周日）
   // yearly  → 每年这一天
   // monthly → 每月这一天
   // daily   → 每天
   _getNextOccurrence(reminder) {
-    if (reminder.type === 'once') return reminder.date
     const now = new Date()
+    if (reminder.type === 'once') return reminder.date
+    if (reminder.type === 'daily') return now.toISOString().split('T')[0]
+    if (reminder.type === 'weekly') {
+      const targetDay = Number(reminder.date)
+      const today = now.getDay() || 7
+      let diff = targetDay - today
+      if (diff <= 0) diff += 7
+      const d = new Date(now)
+      d.setDate(d.getDate() + diff)
+      return d.toISOString().split('T')[0]
+    }
     const [m, d] = reminder.date.split('-').map(Number)
     if (reminder.type === 'yearly') {
-      let d = new Date(now.getFullYear(), m - 1, d)
-      if (d < now) d = new Date(now.getFullYear() + 1, m - 1, d)
-      return d.toISOString().split('T')[0]
+      let d2 = new Date(now.getFullYear(), m - 1, d)
+      if (d2 < now) d2 = new Date(now.getFullYear() + 1, m - 1, d)
+      return d2.toISOString().split('T')[0]
     }
     if (reminder.type === 'monthly') {
-      let d = new Date(now.getFullYear(), now.getMonth(), Number(reminder.date))
-      if (d <= now) d = new Date(now.getFullYear(), now.getMonth() + 1, Number(reminder.date))
-      return d.toISOString().split('T')[0]
+      let d2 = new Date(now.getFullYear(), now.getMonth(), Number(reminder.date))
+      if (d2 <= now) d2 = new Date(now.getFullYear(), now.getMonth() + 1, Number(reminder.date))
+      return d2.toISOString().split('T')[0]
     }
-    if (reminder.type === 'daily') return now.toISOString().split('T')[0]
     return reminder.date
   }
 }

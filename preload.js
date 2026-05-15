@@ -18,6 +18,24 @@ contextBridge.exposeInMainWorld('holidayAPI', {
   updateCustomReminder: (id, r) => ipcRenderer.invoke('update-custom-reminder', id, r),
   removeCustomReminder: (id) => ipcRenderer.invoke('remove-custom-reminder', id),
 
+  // 置顶
+  getOnTopState: () => ipcRenderer.invoke('get-ontop-state'),
+  toggleOnTop: () => ipcRenderer.invoke('toggle-ontop'),
+  onOnTopChanged: (cb) => ipcRenderer.on('ontop-changed', (_, v) => cb(v)),
+
+  // 打开设置窗口
+  openSettings: () => ipcRenderer.invoke('open-settings'),
+
+  // 透明度
+  setOpacity: (v) => ipcRenderer.invoke('set-opacity', v),
+  onOpacityChanged: (cb) => ipcRenderer.on('opacity-changed', (_, v) => cb(v)),
+
+  // 农历转换
+  getLunarDate: (dateStr) => ipcRenderer.invoke('get-lunar-date', dateStr),
+
+  // 检查更新
+  checkUpdate: () => ipcRenderer.invoke('check-update'),
+
   // 监听主进程事件（如刷新节日数据）
   onRefresh: (cb) => ipcRenderer.on('refresh-holidays', cb)
 })

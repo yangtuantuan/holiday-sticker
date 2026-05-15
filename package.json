@@ -15,7 +15,8 @@
     "jest": "^29.0.0"
   },
   "dependencies": {
-    "electron-store": "^8.0.0"
+    "electron-store": "^8.0.0",
+    "lunar": "^2.0.0"
   },
   "build": {
     "appId": "com.holiday-sticker.app",

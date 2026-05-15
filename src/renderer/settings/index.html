@@ -34,6 +34,18 @@
         <div class="form-group">
           <label><input type="checkbox" id="reminder-enabled" checked> 启用提醒</label>
         </div>
+        <div class="form-group">
+          <label>贴纸透明度</label>
+          <div class="opacity-row">
+            <input type="range" id="opacity-slider" min="0.3" max="1.0" step="0.05" value="1.0">
+            <span id="opacity-value" class="opacity-label">100%</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>检查更新</label>
+          <button id="check-update" class="btn-secondary">检查更新</button>
+          <span id="update-status" class="status-msg"></span>
+        </div>
         <button id="save-general" class="btn-primary">保存</button>
         <div id="general-status" class="status-msg"></div>
       </div>
@@ -80,14 +92,15 @@
             <select id="reminder-type">
               <option value="once">一次性</option>
               <option value="daily">每天</option>
+              <option value="weekly">每周</option>
               <option value="monthly">每月</option>
               <option value="yearly">每年</option>
             </select>
           </div>
           <div class="form-group">
             <label>日期</label>
-            <input type="text" id="reminder-date" placeholder="一次性: 2026-03-15 / 每年: 03-15 / 每月: 15">
-            <div class="hint">一次性填完整日期如 2026-03-15，每年填 MM-DD 如 03-15，每月填天数如 15</div>
+            <input type="text" id="reminder-date" placeholder="一次性: 2026-03-15 / 每周: 1-7 / 每年: 03-15 / 每月: 15">
+            <div class="hint">一次性填完整日期，每周填 1-7(周一~周日)，每年填 MM-DD，每月填天数</div>
           </div>
           <div class="form-group">
             <label>时间</label>

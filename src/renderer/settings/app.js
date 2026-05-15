@@ -3,6 +3,13 @@
 
 const api = window.holidayAPI
 
+window.onerror = (msg, url, line, col, err) => {
+  try { console.error('[settings]', msg, err) } catch {}
+}
+window.onunhandledrejection = (e) => {
+  try { console.error('[settings] unhandled', e.reason) } catch {}
+}
+
 // ===== 标签切换 =====
 document.querySelectorAll('.tab').forEach(tab => {
   tab.onclick = () => {
@@ -20,6 +27,8 @@ async function loadSettings() {
   document.getElementById('auto-start').checked = settings.autoStart
   document.getElementById('reminder-enabled').checked = settings.reminderEnabled
   document.getElementById('daily-reminder-time').value = settings.dailyReminderTime
+  document.getElementById('opacity-slider').value = settings.opacity ?? 1.0
+  document.getElementById('opacity-value').textContent = Math.round((settings.opacity ?? 1.0) * 100) + '%'
 
   // 加载提前提醒天数预设选项
   document.querySelectorAll('#advance-presets input').forEach(cb => {
@@ -36,6 +45,18 @@ document.getElementById('save-general').onclick = async () => {
   })
   document.getElementById('general-status').textContent = '✓ 已保存'
   setTimeout(() => document.getElementById('general-status').textContent = '', 2000)
+}
+
+document.getElementById('opacity-slider').oninput = async (e) => {
+  const v = parseFloat(e.target.value)
+  document.getElementById('opacity-value').textContent = Math.round(v * 100) + '%'
+  await api.setOpacity(v)
+}
+
+document.getElementById('check-update').onclick = async () => {
+  const result = await api.checkUpdate()
+  document.getElementById('update-status').textContent = result.message
+  setTimeout(() => document.getElementById('update-status').textContent = '', 3000)
 }
 
 document.getElementById('save-reminders').onclick = async () => {

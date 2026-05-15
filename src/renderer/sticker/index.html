@@ -7,17 +7,11 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- 贴纸主容器 -->
   <div id="sticker" class="sticker">
-    <!-- 拖拽区域（无边框窗口靠这个区域拖拽移动） -->
-    <div id="drag-region" class="drag-region"></div>
-    <!-- 关闭按钮（悬停时显示） -->
-    <div id="close-btn" class="close-btn">&times;</div>
+    <div id="ontop-btn" class="ontop-btn">📍</div>
 
-    <!-- 标题 -->
-    <div class="header">🏮 节日倒计时</div>
+    <div class="header">放假拉~</div>
 
-    <!-- 距离最近的下一个节日（大号高亮） -->
     <div id="next-holiday" class="next-holiday">
       <div id="next-name" class="next-name">加载中...</div>
       <div id="next-countdown" class="next-countdown"></div>
@@ -26,10 +20,8 @@
 
     <div class="divider">── 近期节日 ──</div>
 
-    <!-- 节日列表（近期节日 + 自定义提醒混排） -->
     <ul id="holiday-list" class="holiday-list"></ul>
 
-    <!-- 底部显示今日日期 -->
     <div class="footer">
       <span id="today-date"></span>
     </div>

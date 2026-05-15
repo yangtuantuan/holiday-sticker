@@ -210,6 +210,23 @@ input[type="checkbox"] {
   color: #e74c3c;
 }
 
+.opacity-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.opacity-row input[type="range"] {
+  flex: 1;
+  accent-color: #e74c3c;
+}
+
+.opacity-label {
+  min-width: 40px;
+  font-size: 13px;
+  color: #666;
+}
+
 .status-msg {
   margin-top: 12px;
   font-size: 13px;
