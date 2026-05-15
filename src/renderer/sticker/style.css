@@ -1,0 +1,163 @@
+/* 贴纸窗口样式：毛玻璃效果便利贴 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  background: transparent;     /* 背景透明，实现圆角无边框效果 */
+  color: #333;
+  -webkit-app-region: no-drag;
+  user-select: none;           /* 禁止选中文字（贴纸不需要） */
+  overflow: hidden;
+}
+
+/* 贴纸主体：白色半透明 + 毛玻璃模糊 */
+.sticker {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px); /* 毛玻璃效果 */
+  border-radius: 16px;
+  padding: 16px;
+  width: 280px;
+  min-height: 300px;
+  position: relative;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 拖拽区域：覆盖顶部，-webkit-app-region: drag 让 Electron 支持拖拽移动 */
+.drag-region {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  -webkit-app-region: drag;
+  cursor: grab;
+}
+
+/* 关闭按钮：默认隐藏，鼠标悬停贴纸时显示 */
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: #999;
+  z-index: 10;
+}
+
+.sticker:hover .close-btn {
+  opacity: 1;
+}
+
+.close-btn:hover {
+  color: #e74c3c;
+}
+
+.header {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #e74c3c;
+}
+
+/* 下一个节日卡片：红色渐变背景高亮 */
+.next-holiday {
+  background: linear-gradient(135deg, #fff5f5, #fff0f0);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  margin-bottom: 12px;
+  border: 1px solid #ffe0e0;
+}
+
+.next-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #c0392b;
+}
+
+.next-countdown {
+  font-size: 28px;
+  font-weight: 700;
+  color: #e74c3c;
+  margin: 6px 0;
+}
+
+.next-date {
+  font-size: 12px;
+  color: #888;
+}
+
+.divider {
+  text-align: center;
+  color: #bbb;
+  font-size: 12px;
+  margin: 8px 0;
+}
+
+/* 节日列表 */
+.holiday-list {
+  list-style: none;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.holiday-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 4px;
+  font-size: 13px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.holiday-list li:last-child {
+  border-bottom: none;
+}
+
+.holiday-icon {
+  margin-right: 6px;
+}
+
+.holiday-name {
+  flex: 1;
+}
+
+.holiday-countdown {
+  color: #e67e22;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.holiday-date {
+  color: #999;
+  font-size: 11px;
+  margin-left: 8px;
+}
+
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: #bbb;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 2px;
+}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设置 - Holiday Sticker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 左侧导航标签 -->
+    <div class="sidebar">
+      <div class="tab active" data-tab="general">通用</div>
+      <div class="tab" data-tab="reminders">提醒</div>
+      <div class="tab" data-tab="custom">自定义提醒</div>
+    </div>
+
+    <div class="content">
+      <!-- ===== 通用设置 ===== -->
+      <div class="tab-content active" id="tab-general">
+        <h2>通用设置</h2>
+        <div class="form-group">
+          <label>贴纸位置</label>
+          <select id="sticker-position">
+            <option value="top-left">左上</option>
+            <option value="top-right">右上</option>
+            <option value="bottom-left">左下</option>
+            <option value="bottom-right" selected>右下</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="auto-start"> 开机自启</label>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="reminder-enabled" checked> 启用提醒</label>
+        </div>
+        <button id="save-general" class="btn-primary">保存</button>
+        <div id="general-status" class="status-msg"></div>
+      </div>
+
+      <!-- ===== 提醒设置 ===== -->
+      <div class="tab-content" id="tab-reminders">
+        <h2>提醒设置</h2>
+        <div class="form-group">
+          <label>每日节日提醒时间</label>
+          <input type="time" id="daily-reminder-time" value="08:00">
+        </div>
+        <div class="form-group">
+          <label>提前提醒天数</label>
+          <div id="advance-presets">
+            <label><input type="checkbox" value="1"> 1天</label>
+            <label><input type="checkbox" value="3"> 3天</label>
+            <label><input type="checkbox" value="7"> 7天</label>
+          </div>
+          <div class="form-group-inline">
+            <label>自定义天数（逗号分隔，如 14, 30）</label>
+            <input type="text" id="custom-advance-days" placeholder="例如: 14, 30">
+          </div>
+        </div>
+        <button id="save-reminders" class="btn-primary">保存</button>
+        <div id="reminders-status" class="status-msg"></div>
+      </div>
+
+      <!-- ===== 自定义提醒 ===== -->
+      <div class="tab-content" id="tab-custom">
+        <h2>自定义提醒</h2>
+        <!-- 提醒列表 -->
+        <div id="custom-reminder-list"></div>
+        <button id="add-reminder-btn" class="btn-secondary">+ 添加提醒</button>
+
+        <!-- 添加/编辑提醒表单 -->
+        <div id="reminder-form" class="reminder-form hidden">
+          <input type="hidden" id="reminder-id">
+          <div class="form-group">
+            <label>标题</label>
+            <input type="text" id="reminder-title" placeholder="例如: 朋友生日">
+          </div>
+          <div class="form-group">
+            <label>类型</label>
+            <select id="reminder-type">
+              <option value="once">一次性</option>
+              <option value="daily">每天</option>
+              <option value="monthly">每月</option>
+              <option value="yearly">每年</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>日期</label>
+            <input type="text" id="reminder-date" placeholder="一次性: 2026-03-15 / 每年: 03-15 / 每月: 15">
+            <div class="hint">一次性填完整日期如 2026-03-15，每年填 MM-DD 如 03-15，每月填天数如 15</div>
+          </div>
+          <div class="form-group">
+            <label>时间</label>
+            <input type="time" id="reminder-time" value="09:00">
+          </div>
+          <div class="form-group">
+            <label>提前提醒天数（逗号分隔）</label>
+            <input type="text" id="reminder-advance" placeholder="例如: 1, 3">
+          </div>
+          <div class="form-actions">
+            <button id="save-reminder" class="btn-primary">保存</button>
+            <button id="cancel-reminder" class="btn-cancel">取消</button>
+          </div>
+        </div>
+        <div id="custom-status" class="status-msg"></div>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
