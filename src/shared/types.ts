@@ -18,10 +18,18 @@ export interface LunarResult {
   gzY: string
 }
 
+export interface LunarMonthInfo {
+  month: number
+  isLeap: boolean
+  days: number
+  label: string
+}
+
 export interface Reminder {
   id: string
   title: string
   type: 'once' | 'daily' | 'weekly' | 'monthly' | 'yearly'
+  calendar: 'gregorian' | 'lunar'
   date: string
   time: string
   advanceReminderDays: number[]
@@ -69,6 +77,8 @@ export interface HolidayAPI {
   setOpacity: (v: number) => Promise<void>
   onOpacityChanged: (cb: (v: number) => void) => void
   getLunarDate: (dateStr: string) => Promise<LunarResult | null>
+  getLunarMonthInfo: (year: number) => Promise<LunarMonthInfo[]>
+  formatLunarDate: (dateStr: string, type: string) => Promise<string>
   checkUpdate: () => Promise<UpdateResult>
   onRefresh: (cb: () => void) => void
 }
