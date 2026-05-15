@@ -1,4 +1,4 @@
-const Api = require('../src/main/api')
+const Api = require('../src/main/api').default
 
 global.fetch = jest.fn()
 
