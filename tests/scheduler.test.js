@@ -86,4 +86,64 @@ describe('Scheduler', () => {
     const result = scheduler.checkReminders(holidays, [])
     expect(result.some(r => r.title === '测试节' && r.type === 'holiday')).toBe(true)
   })
+
+  test('_getNextOccurrence handles lunar calendar once type', () => {
+    const reminder = {
+      id: 'test1',
+      title: '农历生日',
+      type: 'once',
+      date: '2026-1-1',
+      time: '09:00',
+      calendar: 'lunar',
+      advanceReminderDays: [],
+      enabled: true
+    }
+    const result = scheduler._getNextOccurrence(reminder)
+    expect(result).toBe('2026-02-17')
+  })
+
+  test('_getNextOccurrence handles lunar calendar yearly type', () => {
+    const reminder = {
+      id: 'test2',
+      title: '每年农历三月十五',
+      type: 'yearly',
+      date: '3-15',
+      time: '09:00',
+      calendar: 'lunar',
+      advanceReminderDays: [],
+      enabled: true
+    }
+    const result = scheduler._getNextOccurrence(reminder)
+    expect(result).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  })
+
+  test('_getNextOccurrence handles leap month lunar date', () => {
+    const reminder = {
+      id: 'test3',
+      title: '闰二月十五',
+      type: 'once',
+      date: '2023-102-15',
+      time: '09:00',
+      calendar: 'lunar',
+      advanceReminderDays: [],
+      enabled: true
+    }
+    const result = scheduler._getNextOccurrence(reminder)
+    expect(result).toBe('2023-04-05')
+  })
+
+  test('_getNextOccurrence treats gregorian calendar same as before', () => {
+    const reminder = {
+      id: 'test4',
+      title: '普通提醒',
+      type: 'once',
+      date: '2026-06-01',
+      time: '09:00',
+      calendar: 'gregorian',
+      advanceReminderDays: [],
+      enabled: true
+    }
+    const result = scheduler._getNextOccurrence(reminder)
+    expect(result).toBe('2026-06-01')
+  })
 })
