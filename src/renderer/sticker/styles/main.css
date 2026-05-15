@@ -24,6 +24,7 @@ body {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.3);
   overflow: hidden;
+  -webkit-app-region: drag;
 }
 
 .ontop-btn {
@@ -35,6 +36,10 @@ body {
   transition: opacity 0.2s, color 0.2s;
   z-index: 10;
   -webkit-app-region: no-drag;
+  border: none;
+  outline: none;
+  background: none;
+  padding: 0;
 }
 
 .sticker:hover .ontop-btn {
