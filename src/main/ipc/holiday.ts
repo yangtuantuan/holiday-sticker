@@ -2,7 +2,7 @@ import { ipcMain } from 'electron'
 import logger from '../logger'
 import type Store from '../store'
 import type Api from '../api'
-import { solarToLunar } from '../lunar'
+import { solarToLunar, lunarToSolar, getLunarMonthInfo, formatLunarDateDisplay } from '../lunar'
 
 export function registerHolidayHandlers(store: Store, api: Api): void {
   ipcMain.handle('get-holidays', () => {
@@ -21,6 +21,24 @@ export function registerHolidayHandlers(store: Store, api: Api): void {
     } catch (err) {
       logger.error('get-lunar-date 失败', err)
       return null
+    }
+  })
+
+  ipcMain.handle('get-lunar-month-info', (_event, year: number) => {
+    try {
+      return getLunarMonthInfo(year)
+    } catch (err) {
+      logger.error('get-lunar-month-info 失败', err)
+      return []
+    }
+  })
+
+  ipcMain.handle('format-lunar-date', (_event, dateStr: string, type: string) => {
+    try {
+      return formatLunarDateDisplay(dateStr, type)
+    } catch (err) {
+      logger.error('format-lunar-date 失败', err)
+      return dateStr
     }
   })
 }
