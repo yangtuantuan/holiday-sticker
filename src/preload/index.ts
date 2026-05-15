@@ -1,41 +1,23 @@
-// 预加载脚本：在渲染进程和主进程之间建立安全的 IPC 通信桥
-// contextBridge.exposeInMainWorld 把 API 暴露给渲染进程的 window.holidayAPI
-// 这样渲染进程只能通过这里定义的方法和主进程通信，不能直接访问 Node.js API
+import { contextBridge, ipcRenderer } from 'electron'
+import type { HolidayAPI } from '../shared/types'
 
-const { contextBridge, ipcRenderer } = require('electron')
-
-contextBridge.exposeInMainWorld('holidayAPI', {
-  // 节日数据
+const api: HolidayAPI = {
   getHolidays: () => ipcRenderer.invoke('get-holidays'),
-
-  // 设置
   getSettings: () => ipcRenderer.invoke('get-settings'),
   updateSettings: (s) => ipcRenderer.invoke('update-settings', s),
-
-  // 自定义提醒 CRUD
   getCustomReminders: () => ipcRenderer.invoke('get-custom-reminders'),
   addCustomReminder: (r) => ipcRenderer.invoke('add-custom-reminder', r),
   updateCustomReminder: (id, r) => ipcRenderer.invoke('update-custom-reminder', id, r),
   removeCustomReminder: (id) => ipcRenderer.invoke('remove-custom-reminder', id),
-
-  // 置顶
   getOnTopState: () => ipcRenderer.invoke('get-ontop-state'),
   toggleOnTop: () => ipcRenderer.invoke('toggle-ontop'),
-  onOnTopChanged: (cb) => ipcRenderer.on('ontop-changed', (_, v) => cb(v)),
-
-  // 打开设置窗口
+  onOnTopChanged: (cb) => { ipcRenderer.on('ontop-changed', (_event, v) => cb(v)) },
   openSettings: () => ipcRenderer.invoke('open-settings'),
-
-  // 透明度
   setOpacity: (v) => ipcRenderer.invoke('set-opacity', v),
-  onOpacityChanged: (cb) => ipcRenderer.on('opacity-changed', (_, v) => cb(v)),
-
-  // 农历转换
+  onOpacityChanged: (cb) => { ipcRenderer.on('opacity-changed', (_event, v) => cb(v)) },
   getLunarDate: (dateStr) => ipcRenderer.invoke('get-lunar-date', dateStr),
-
-  // 检查更新
   checkUpdate: () => ipcRenderer.invoke('check-update'),
+  onRefresh: (cb) => { ipcRenderer.on('refresh-holidays', () => cb()) }
+}
 
-  // 监听主进程事件（如刷新节日数据）
-  onRefresh: (cb) => ipcRenderer.on('refresh-holidays', cb)
-})
+contextBridge.exposeInMainWorld('holidayAPI', api)
