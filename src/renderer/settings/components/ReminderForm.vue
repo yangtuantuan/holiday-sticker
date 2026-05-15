@@ -70,14 +70,20 @@ function parseExistingDate(): void {
       const parts = props.reminder.date.split('-').map(Number)
       if (parts.length === 3) {
         lunarYear.value = parts[0]
-        const idx = lunarMonthInfo.value.findIndex(m => m.month === parts[1] && !m.isLeap)
+        const rawMonth = parts[1]
+        const isLeap = rawMonth > 100
+        const actualMonth = isLeap ? rawMonth - 100 : rawMonth
+        const idx = lunarMonthInfo.value.findIndex(m => m.month === actualMonth && m.isLeap === isLeap)
         if (idx >= 0) lunarSelectedIdx.value = idx
         lunarDay.value = parts[2]
       }
     } else if (props.reminder.type === 'yearly' && props.reminder.date.includes('-')) {
       const parts = props.reminder.date.split('-').map(Number)
       if (parts.length === 2) {
-        const idx = lunarMonthInfo.value.findIndex(m => m.month === parts[0] && !m.isLeap)
+        const rawMonth = parts[0]
+        const isLeap = rawMonth > 100
+        const actualMonth = isLeap ? rawMonth - 100 : rawMonth
+        const idx = lunarMonthInfo.value.findIndex(m => m.month === actualMonth && m.isLeap === isLeap)
         if (idx >= 0) lunarSelectedIdx.value = idx
         lunarDay.value = parts[1]
       }
@@ -121,8 +127,13 @@ function submit(): void {
   } else {
     const m = currentLunarMonth.value
     if (!m) return
-    if (type.value === 'once') dateStr = `${lunarYear.value}-${m.month}-${lunarDay.value}`
-    else if (type.value === 'yearly') dateStr = `${m.month}-${lunarDay.value}`
+    if (type.value === 'once') {
+      const month = m.isLeap ? m.month + 100 : m.month
+      dateStr = `${lunarYear.value}-${month}-${lunarDay.value}`
+    } else if (type.value === 'yearly') {
+      const month = m.isLeap ? m.month + 100 : m.month
+      dateStr = `${month}-${lunarDay.value}`
+    }
   }
 
   emit('save', {

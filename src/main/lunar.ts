@@ -32,25 +32,39 @@ function pad(n: number): string {
   return String(n).padStart(2, '0')
 }
 
+function parseLunarDateStr(dateStr: string, type: string): { year?: number; month: number; day: number; isLeapMonth: boolean } | null {
+  if (type === 'once') {
+    const parts = dateStr.split('-').map(Number)
+    if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) return null
+    const rawMonth = parts[1]
+    return { year: parts[0], month: rawMonth > 100 ? rawMonth - 100 : rawMonth, day: parts[2], isLeapMonth: rawMonth > 100 }
+  }
+  if (type === 'yearly') {
+    const parts = dateStr.split('-').map(Number)
+    if (parts.length !== 2 || !parts[0] || !parts[1]) return null
+    const rawMonth = parts[0]
+    return { month: rawMonth > 100 ? rawMonth - 100 : rawMonth, day: parts[1], isLeapMonth: rawMonth > 100 }
+  }
+  return null
+}
+
 export function lunarToSolar(dateStr: string, type: string): string | null {
   try {
+    const parsed = parseLunarDateStr(dateStr, type)
+    if (!parsed) return null
     if (type === 'once') {
-      const [y, m, d] = dateStr.split('-').map(Number)
-      if (!y || !m || !d) return null
-      const gregorian = toGregorian(createLunarDate({ year: y, month: m, day: d, isLeapMonth: false }))
+      const gregorian = toGregorian(createLunarDate({ year: parsed.year!, month: parsed.month, day: parsed.day, isLeapMonth: parsed.isLeapMonth }))
       const date = gregorian.date
       return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
     }
     if (type === 'yearly') {
-      const [m, d] = dateStr.split('-').map(Number)
-      if (!m || !d) return null
       const now = new Date()
       const currentYear = now.getFullYear()
       const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-      let gregorian = toGregorian(createLunarDate({ year: currentYear, month: m, day: d, isLeapMonth: false }))
+      let gregorian = toGregorian(createLunarDate({ year: currentYear, month: parsed.month, day: parsed.day, isLeapMonth: parsed.isLeapMonth }))
       let gregDate = gregorian.date
       if (gregDate <= todayStart) {
-        gregorian = toGregorian(createLunarDate({ year: currentYear + 1, month: m, day: d, isLeapMonth: false }))
+        gregorian = toGregorian(createLunarDate({ year: currentYear + 1, month: parsed.month, day: parsed.day, isLeapMonth: parsed.isLeapMonth }))
         gregDate = gregorian.date
       }
       return `${gregDate.getFullYear()}-${pad(gregDate.getMonth() + 1)}-${pad(gregDate.getDate())}`
@@ -85,10 +99,10 @@ export function getLunarMonthInfo(year: number): LunarMonthInfo[] {
 
 export function formatLunarDateDisplay(dateStr: string, type: string): string {
   try {
+    const parsed = parseLunarDateStr(dateStr, type)
+    if (!parsed) return ''
     if (type === 'once') {
-      const [y, m, d] = dateStr.split('-').map(Number)
-      if (!y || !m || !d) return ''
-      const lunar = createLunarDate({ year: y, month: m, day: d, isLeapMonth: false })
+      const lunar = createLunarDate({ year: parsed.year!, month: parsed.month, day: parsed.day, isLeapMonth: parsed.isLeapMonth })
       const parts = formatLunarParts(lunar)
       const yearStem = parts.find(p => p.type === 'yearStem')?.value || ''
       const yearBranch = parts.find(p => p.type === 'yearBranch')?.value || ''
@@ -97,9 +111,8 @@ export function formatLunarDateDisplay(dateStr: string, type: string): string {
       return `农历${yearStem}${yearBranch}年${monthLabel}${dayLabel}`
     }
     if (type === 'yearly') {
-      const [m, d] = dateStr.split('-').map(Number)
-      if (!m || !d) return ''
-      return `每年农历${getLunarMonthName(m)}${LUNAR_DAY_NAMES[d] || ''}`
+      const name = (parsed.isLeapMonth ? '闰' : '') + getLunarMonthName(parsed.month)
+      return `每年农历${name}${LUNAR_DAY_NAMES[parsed.day] || ''}`
     }
     return ''
   } catch {
