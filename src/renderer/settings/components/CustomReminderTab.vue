@@ -9,9 +9,21 @@ const reminders = ref<Reminder[]>([])
 const editingId = ref<string | null>(null)
 const showForm = ref(false)
 const editingReminder = ref<Reminder | null>(null)
+const lunarTexts = ref<Record<string, string>>({})
 
 async function loadReminders(): Promise<void> {
   reminders.value = await api.getCustomReminders()
+  const texts: Record<string, string> = {}
+  for (const r of reminders.value) {
+    if (r.calendar === 'lunar') {
+      try {
+        texts[r.id] = await api.formatLunarDate(r.date, r.type)
+      } catch {
+        texts[r.id] = r.date
+      }
+    }
+  }
+  lunarTexts.value = texts
 }
 
 function startAdd(): void {
@@ -68,7 +80,12 @@ onMounted(loadReminders)
       <div v-for="r in reminders" :key="r.id" class="reminder-item">
         <div>
           <div class="title">{{ r.title }}</div>
-          <div class="meta">{{ typeLabels[r.type] }} · {{ r.date }} {{ r.time || '' }}</div>
+          <div class="meta">
+            {{ typeLabels[r.type] }} ·
+            <template v-if="r.calendar === 'lunar'">{{ lunarTexts[r.id] || r.date }} <span class="lunar-badge">农历</span></template>
+            <template v-else>{{ r.date }}</template>
+            {{ r.time || '' }}
+          </div>
         </div>
         <div class="actions">
           <button @click="startEdit(r.id)">✏️</button>

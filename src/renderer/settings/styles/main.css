@@ -232,3 +232,14 @@ input[type="checkbox"] {
   font-size: 13px;
   color: #27ae60;
 }
+
+.lunar-badge {
+  display: inline-block;
+  font-size: 11px;
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffcc80;
+  border-radius: 3px;
+  padding: 0 4px;
+  margin-left: 4px;
+}
