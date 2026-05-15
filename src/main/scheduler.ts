@@ -1,19 +1,27 @@
-// 调度器：负责定时刷新节日数据、检查提醒、触发通知
-// 通过依赖注入拿到 store、api、notify 函数，方便测试
+import logger from './logger'
+import type Store from './store'
+import type Api from './api'
+import type { Holiday, Reminder, NotificationData } from '../shared/types'
 
-const logger = require('./logger')
+type NotifyFn = (data: NotificationData) => void
+type OnUpdateFn = () => void
 
 class Scheduler {
-  constructor(store, api, notifyFn, onUpdateFn) {
+  private store: Store
+  private api: Api
+  private notify: NotifyFn
+  private onUpdate: OnUpdateFn
+  private _interval: ReturnType<typeof setInterval> | null = null
+
+  constructor(store: Store, api: Api, notifyFn: NotifyFn, onUpdateFn: OnUpdateFn) {
     this.store = store
     this.api = api
-    this.notify = notifyFn    // 发通知的回调（由 main.js 传入）
-    this.onUpdate = onUpdateFn // 数据更新后通知渲染进程的回调
+    this.notify = notifyFn
+    this.onUpdate = onUpdateFn
     this._interval = null
   }
 
-  // 启动调度：立即执行一次每日检查 + 设置定时器
-  start() {
+  start(): void {
     try {
       this.dailyCheck()
     } catch (err) {
@@ -35,8 +43,7 @@ class Scheduler {
     }, 60 * 1000)
   }
 
-  // 每日检查：如果当天还没更新，就去拉 API
-  async dailyCheck() {
+  async dailyCheck(): Promise<void> {
     try {
       const lastUpdated = this.store.getLastUpdated()
       if (lastUpdated) {
@@ -57,8 +64,7 @@ class Scheduler {
     }
   }
 
-  // 从节日列表中找出最近的尚未到来的节日
-  getNextHoliday(holidays) {
+  getNextHoliday(holidays: Holiday[]): Holiday | null {
     const today = new Date().toISOString().split('T')[0]
     const upcoming = holidays
       .filter(h => h.date >= today)
@@ -66,20 +72,16 @@ class Scheduler {
     return upcoming.length > 0 ? upcoming[0] : null
   }
 
-  // 检查哪些提醒需要触发
-  // 返回数组 [{ title, type, subtype, date, localName }]
-  checkReminders(holidays, customReminders) {
+  checkReminders(holidays: Holiday[], customReminders: Reminder[]): NotificationData[] {
     const today = new Date().toISOString().split('T')[0]
-    const results = []
+    const results: NotificationData[] = []
 
-    // 检查节日——今天是不是某个节日
     for (const h of holidays) {
       if (h.date === today) {
         results.push({ title: h.localName, type: 'holiday', subtype: 'today', date: h.date, localName: h.localName })
       }
     }
 
-    // 检查自定义提醒
     for (const r of customReminders) {
       if (!r.enabled) continue
       const nextDate = this._getNextOccurrence(r)
@@ -91,15 +93,15 @@ class Scheduler {
     return results
   }
 
-  // 每分钟检查一次：如果有提醒就发通知
-  minuteCheck() {
+  minuteCheck(): void {
     const settings = this.store.getSettings()
     if (!settings.reminderEnabled) return
 
-    // 组合今年 + 明年的节日数据
+    const currentYear = String(new Date().getFullYear())
+    const nextYear = String(new Date().getFullYear() + 1)
     const holidays = [
-      ...(this.store.getHolidayCache(String(new Date().getFullYear())) || []),
-      ...(this.store.getHolidayCache(String(new Date().getFullYear() + 1)) || [])
+      ...((this.store.getHolidayCache(currentYear) as Holiday[]) || []),
+      ...((this.store.getHolidayCache(nextYear) as Holiday[]) || [])
     ].filter(Boolean)
 
     const reminders = this.checkReminders(holidays, this.store.getCustomReminders())
@@ -108,13 +110,7 @@ class Scheduler {
     }
   }
 
-  // 计算自定义提醒的下次发生日期（内部方法）
-  // once    → 直接返回 date
-  // weekly  → 每周这一天（1=周一 ... 7=周日）
-  // yearly  → 每年这一天
-  // monthly → 每月这一天
-  // daily   → 每天
-  _getNextOccurrence(reminder) {
+  _getNextOccurrence(reminder: Reminder): string {
     const now = new Date()
     if (reminder.type === 'once') return reminder.date
     if (reminder.type === 'daily') return now.toISOString().split('T')[0]
@@ -142,4 +138,4 @@ class Scheduler {
   }
 }
 
-module.exports = Scheduler
+export default Scheduler

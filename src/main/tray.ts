@@ -1,18 +1,26 @@
-const { app, Tray, Menu, nativeImage, Notification } = require('electron')
-const path = require('path')
-const logger = require('./logger')
+import { app, Tray, Menu, nativeImage, Notification } from 'electron'
+import { join } from 'path'
+import logger from './logger'
+import type Store from './store'
+import type { BrowserWindow } from 'electron'
 
 class TrayManager {
-  constructor(mainWindow, settingsWindow, store) {
+  private mainWindow: BrowserWindow
+  private settingsWindow: BrowserWindow
+  private store: Store
+  private tray: Tray | null = null
+  private _defaultIcon!: Electron.NativeImage
+
+  constructor(mainWindow: BrowserWindow, settingsWindow: BrowserWindow, store: Store) {
     this.mainWindow = mainWindow
     this.settingsWindow = settingsWindow
     this.store = store
     this.tray = null
   }
 
-  create() {
+  create(): void {
     this._defaultIcon = nativeImage.createFromPath(
-      path.join(__dirname, '..', '..', 'assets', 'icon.png')
+      join(__dirname, '..', '..', 'assets', 'icon.png')
     ).resize({ width: 16, height: 16 })
     this.tray = new Tray(this._defaultIcon)
     this.tray.setToolTip('Holiday Sticker')
@@ -30,7 +38,7 @@ class TrayManager {
     this._updateMenu()
   }
 
-  _updateMenu() {
+  _updateMenu(): void {
     const isVisible = this.mainWindow && !this.mainWindow.isDestroyed() && this.mainWindow.isVisible()
     const contextMenu = Menu.buildFromTemplate([
       {
@@ -81,10 +89,10 @@ class TrayManager {
         click: () => app.quit()
       }
     ])
-    this.tray.setContextMenu(contextMenu)
+    this.tray!.setContextMenu(contextMenu)
   }
 
-  async _checkUpdate() {
+  async _checkUpdate(): Promise<void> {
     try {
       const currentVersion = app.getVersion()
       const notification = new Notification({
@@ -97,7 +105,7 @@ class TrayManager {
     }
   }
 
-  destroy() {
+  destroy(): void {
     if (this.tray) {
       this.tray.destroy()
       this.tray = null
@@ -105,4 +113,4 @@ class TrayManager {
   }
 }
 
-module.exports = TrayManager
+export default TrayManager

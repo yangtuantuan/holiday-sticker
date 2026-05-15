@@ -1,4 +1,4 @@
-const Scheduler = require('../src/main/scheduler')
+const Scheduler = require('../src/main/scheduler').default
 
 // 使用假定时器，避免测试实际等待
 jest.useFakeTimers()
