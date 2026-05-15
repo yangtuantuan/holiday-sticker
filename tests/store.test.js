@@ -1,8 +1,21 @@
 const Store = require('../src/main/store')
 
+// 模拟 electron-store：内部维护状态，支持 defaults，同时保留 mockReturnValue 的覆盖能力
 jest.mock('electron-store', () => {
-  const mockStore = { get: jest.fn(), set: jest.fn() }
-  return jest.fn(() => mockStore)
+  return function(opts) {
+    const state = JSON.parse(JSON.stringify(opts.defaults || {}))
+    return {
+      get: jest.fn((key) => {
+        const keys = key.split('.')
+        let val = state
+        for (const k of keys) {
+          if (val) val = val[k]
+        }
+        return val !== undefined ? val : null
+      }),
+      set: jest.fn((key, value) => { state[key] = value })
+    }
+  }
 })
 
 describe('Store', () => {

@@ -62,12 +62,12 @@ describe('Scheduler', () => {
     expect(result).toBeNull()
   })
 
-  // getNextHoliday 应该返回最近的未来节日
+  // getNextHoliday 应该返回最近的未来节日（测试日期需在当前日期之后）
   test('getNextHoliday returns the upcoming holiday', () => {
     const holidays = [
-      { date: '2026-01-10', localName: 'past' },
-      { date: '2026-01-29', localName: '春节' },
-      { date: '2026-02-12', localName: '元宵节' }
+      { date: '2026-05-10', localName: 'past' },
+      { date: '2026-05-20', localName: '春节' },
+      { date: '2026-06-01', localName: '儿童节' }
     ]
     const result = scheduler.getNextHoliday(holidays)
     expect(result.localName).toBe('春节')
