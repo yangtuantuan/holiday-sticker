@@ -4,28 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Holiday Sticker</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="./styles/main.css">
 </head>
 <body>
-  <div id="sticker" class="sticker">
-    <div id="ontop-btn" class="ontop-btn">📍</div>
-
-    <div class="header">放假拉~</div>
-
-    <div id="next-holiday" class="next-holiday">
-      <div id="next-name" class="next-name">加载中...</div>
-      <div id="next-countdown" class="next-countdown"></div>
-      <div id="next-date" class="next-date"></div>
-    </div>
-
-    <div class="divider">── 近期节日 ──</div>
-
-    <ul id="holiday-list" class="holiday-list"></ul>
-
-    <div class="footer">
-      <span id="today-date"></span>
-    </div>
-  </div>
-  <script src="app.js"></script>
+  <div id="app"></div>
+  <script type="module" src="./main.ts"></script>
 </body>
 </html>
