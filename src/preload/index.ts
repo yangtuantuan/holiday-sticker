@@ -17,7 +17,9 @@ const api: HolidayAPI = {
   onOpacityChanged: (cb) => { ipcRenderer.on('opacity-changed', (_event, v) => cb(v)) },
   getLunarDate: (dateStr) => ipcRenderer.invoke('get-lunar-date', dateStr),
   checkUpdate: () => ipcRenderer.invoke('check-update'),
-  onRefresh: (cb) => { ipcRenderer.on('refresh-holidays', () => cb()) }
+  onRefresh: (cb) => { ipcRenderer.on('refresh-holidays', () => cb()) },
+  getLunarMonthInfo: (year) => ipcRenderer.invoke('get-lunar-month-info', year),
+  formatLunarDate: (dateStr, type) => ipcRenderer.invoke('format-lunar-date', dateStr, type)
 }
 
 contextBridge.exposeInMainWorld('holidayAPI', api)
