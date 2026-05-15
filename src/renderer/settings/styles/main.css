@@ -1,0 +1,234 @@
+/* 设置窗口样式：左侧标签导航 + 右侧内容区 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  font-size: 14px;
+  color: #333;
+  background: #f8f9fa;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* 左侧导航栏 */
+.sidebar {
+  width: 140px;
+  background: #fff;
+  border-right: 1px solid #e0e0e0;
+  padding: 16px 0;
+}
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #666;
+  font-size: 14px;
+}
+
+.tab:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.tab.active {
+  background: #fff5f5;
+  color: #e74c3c;
+  font-weight: 600;
+  border-right: 3px solid #e74c3c;
+}
+
+/* 右侧内容区域 */
+.content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 4px;
+  color: #666;
+  font-size: 13px;
+}
+
+.form-group-inline {
+  margin-top: 8px;
+}
+
+.hint {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+input[type="text"],
+input[type="time"],
+select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+input[type="text"]:focus,
+input[type="time"]:focus,
+select:focus {
+  outline: none;
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.1);
+}
+
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* 按钮 */
+.btn-primary {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #c0392b;
+}
+
+.btn-secondary {
+  background: #ecf0f1;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.btn-secondary:hover {
+  background: #dfe6e9;
+}
+
+.btn-cancel {
+  background: #fff;
+  color: #666;
+  border: 1px solid #ddd;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  background: #f0f0f0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* 添加/编辑提醒表单 */
+.reminder-form {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* 自定义提醒列表中的每一项 */
+#custom-reminder-list {
+  margin-bottom: 8px;
+}
+
+.reminder-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+.reminder-item .title {
+  font-weight: 500;
+}
+
+.reminder-item .meta {
+  font-size: 12px;
+  color: #999;
+}
+
+.reminder-item .actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 14px;
+  margin-left: 8px;
+}
+
+.reminder-item .actions button:hover {
+  color: #e74c3c;
+}
+
+.opacity-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.opacity-row input[type="range"] {
+  flex: 1;
+  accent-color: #e74c3c;
+}
+
+.opacity-label {
+  min-width: 40px;
+  font-size: 13px;
+  color: #666;
+}
+
+.status-msg {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #27ae60;
+}
