@@ -1,3 +1,4 @@
+import { lunarToSolar } from './lunar'
 import logger from './logger'
 import type Store from './store'
 import type Api from './api'
@@ -111,6 +112,11 @@ class Scheduler {
   }
 
   _getNextOccurrence(reminder: Reminder): string {
+    if (reminder.calendar === 'lunar') {
+      const solar = lunarToSolar(reminder.date, reminder.type)
+      if (solar) return solar
+    }
+
     const now = new Date()
     if (reminder.type === 'once') return reminder.date
     if (reminder.type === 'daily') return now.toISOString().split('T')[0]
