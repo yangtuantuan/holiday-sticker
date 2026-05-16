@@ -9,7 +9,9 @@
     "preview": "electron-vite preview",
     "test": "jest",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "dist:x64": "electron-builder --x64",
+    "dist:arm64": "electron-builder --arm64"
   },
   "jest": {
     "transform": {
@@ -40,8 +42,22 @@
   "build": {
     "appId": "com.holiday-sticker.app",
     "productName": "Holiday Sticker",
+    "directories": {
+      "output": "dist"
+    },
     "win": {
-      "target": "nsis"
+      "icon": "build/icon.png",
+      "target": [
+        { "target": "nsis", "arch": ["x64", "arm64"] },
+        { "target": "zip", "arch": ["x64", "arm64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false
     }
   }
 }
