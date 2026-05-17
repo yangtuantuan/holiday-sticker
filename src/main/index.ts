@@ -114,6 +114,8 @@ app.whenReady().then(() => {
     createSettingsWindow()
     settingsWindow!.hide()
 
+    app.setLoginItemSettings({ openAtLogin: store.getSettings().autoStart })
+
     scheduler = new Scheduler(store, api, sendNotification, broadcastHolidays)
     scheduler.start()
 
