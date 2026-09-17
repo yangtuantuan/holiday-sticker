@@ -17,7 +17,9 @@ class Logger {
     const ts = new Date().toISOString()
     const errInfo = err ? `\n${err instanceof Error ? err.stack || err.message : String(err)}` : ''
     const line = `[${ts}] [${level}] ${msg}${errInfo}\n`
-    console.error(line.trim())
+    if (!app.isPackaged) {
+      console.error(line.trim())
+    }
     try {
       appendFileSync(this._ensurePath(), line, 'utf-8')
     } catch {

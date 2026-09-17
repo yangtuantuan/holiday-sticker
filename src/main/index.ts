@@ -28,6 +28,7 @@ function createStickerWindow(): void {
     alwaysOnTop: settings.pinOnTop,
     resizable: false,
     skipTaskbar: true,
+    show: false,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       contextIsolation: true,
@@ -46,6 +47,7 @@ function createStickerWindow(): void {
       mainWindow!.setBounds(settings.windowPosition)
     }
     mainWindow!.webContents.send('opacity-changed', settings.opacity ?? 1.0)
+    mainWindow!.show()
   })
 
   let moveTimer: ReturnType<typeof setTimeout> | null = null
@@ -65,6 +67,7 @@ function createSettingsWindow(): void {
     width: 500,
     height: 600,
     resizable: false,
+    show: false,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       contextIsolation: true,
